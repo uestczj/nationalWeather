@@ -24,7 +24,7 @@ public class NationalWeatherOpenHelper extends SQLiteOpenHelper {
             + "id integer primary key autoincrement, "
             + "city_name text, "
             + "city_code text, "
-            + "province_code integer)";
+            + "province_id integer)";
 
     /**
      * Create County table
