@@ -82,12 +82,12 @@ public class ChooseAreaActivity extends Activity {
         nationalWeatherDB = NationalWeatherDB.getInstance(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                            public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
                                                 if (currentLevel == LEVEL_PROVINCE) {
-                                                    selectedProvince = provinceList.get(i);
+                                                    selectedProvince = provinceList.get(index);
                                                     queryCities();
                                                 } else if (currentLevel == LEVEL_CITY) {
-                                                    selectedCity = cityList.get(i);
+                                                    selectedCity = cityList.get(index);
                                                     queryCounties();
                                                 }
                                             }
