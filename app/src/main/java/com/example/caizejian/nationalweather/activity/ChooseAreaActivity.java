@@ -2,12 +2,16 @@ package com.example.caizejian.nationalweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,8 @@ public class ChooseAreaActivity extends Activity {
     private NationalWeatherDB nationalWeatherDB;
     private List<String> datalist = new ArrayList<String>();
 
+    private AutoCompleteTextView autoCompleteTextView;
+
     /**
      *  省列表
      */
@@ -70,15 +76,32 @@ public class ChooseAreaActivity extends Activity {
      */
     private int currentLevel;
 
+    private boolean isFromWeatherActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity",false);
+
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("city_selected",false)&& !isFromWeatherActivity){
+            Intent intent = new Intent(this,WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
         listView = (ListView)findViewById(R.id.list_view);
         titleText = (TextView)findViewById(R.id.title_text);
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,datalist);
         listView.setAdapter(adapter);
+
+      //  autoCompleteTextView = (AutoCompleteTextView)findViewById(R.id.auto_text);
+       // autoCompleteTextView.setAdapter(adapter);
+
         nationalWeatherDB = NationalWeatherDB.getInstance(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
@@ -89,6 +112,12 @@ public class ChooseAreaActivity extends Activity {
                                                 } else if (currentLevel == LEVEL_CITY) {
                                                     selectedCity = cityList.get(index);
                                                     queryCounties();
+                                                }else if (currentLevel == LEVEL_COUNTY){
+                                                    String countyCode = countyList.get(index).getCountyCode();
+                                                    Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+                                                    intent.putExtra("county_code",countyCode);
+                                                    startActivity(intent);
+                                                    finish();
                                                 }
                                             }
                                         });
@@ -128,6 +157,11 @@ public class ChooseAreaActivity extends Activity {
     }
 
     private void queryCounties(){
+       // Toast.makeText(ChooseAreaActivity.this,selectedCity.getId(),Toast.LENGTH_LONG).show();
+       // finish();
+        //int a = selectedCity.getId();
+       // Log.d("ChooseAreaActivity",a);
+
         countyList = nationalWeatherDB.loadCounties(selectedCity.getId());
         if(countyList.size()>0){
             datalist.clear();
@@ -214,6 +248,10 @@ public class ChooseAreaActivity extends Activity {
         }else if(currentLevel == LEVEL_CITY){
             queryProvinces();
         }else {
+            if(isFromWeatherActivity){
+                Intent intent = new Intent(this,WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }

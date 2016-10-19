@@ -31,8 +31,8 @@ public class NationalWeatherOpenHelper extends SQLiteOpenHelper {
      */
     public static final String CREATE_COUNTY = "create table County ("
             + "id integer primary key autoincrement, "
-            + "county_name text "
-            + "county_code text "
+            + "county_name text, "
+            + "county_code text, "
             + "city_id integer)";
 
     public NationalWeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
